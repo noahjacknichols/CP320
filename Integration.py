@@ -6,8 +6,12 @@ import time
 
 GPIO.setmode(GPIO.BCM)
 stepper_pins=[18,23,24,25]
+keypad_input_pins = [17, 27] #GPIO pin 17, 27 is for row 1 and 2 respectively
+keypad_output_pins = [20, 21] #GPIO pin 20, 21 is for column 1 and 3 respectively
 
 GPIO.setup(stepper_pins,GPIO.OUT)
+GPIO.setup(keypad_input_pins, GPIO.IN)
+GPIO.setup(keypad_output_pins, GPIO.OUT)
 
 stepper_sequence=[]
 stepper_sequence.append([GPIO.HIGH, GPIO.LOW, GPIO.LOW,GPIO.LOW])
@@ -20,9 +24,17 @@ flag = -1
 distArray = []
 #rotation = float(input("degree:")) //dont need this anymore
 inp = int(rotation * degree)
+def keypad_function(row, col):
+	GPIO.output(col, 1)
+	int value = GPIO.input(row)
+	GPIO.output(col, 0)
+	return value
+
 while True:
-	if(flag == -1):
-		flag = int(input("Press one of the options button for the program"));
+	if keypad_function(17, 20) == 0:
+		flag = 0
+	else if keypad_function(17, 21) == 0:
+		flag = 1
 	try:
 		if flag == 0:
 		# automated solver mode
@@ -67,13 +79,17 @@ while True:
 				while (flag == 1):
 					#get flag = input of choice buttons
 					#grab input on move left or right here
-					input_left = 0 #check left button clicked here
-					input_right = 0 #check right button clicked here
-					if input_left:
+					input_left = 0
+					input_right = 0
+					if keypad_function(27, 20) == 0:
+						input_left = 1
+					else if keypad_function(27, 21) == 0:
+						input_right = 1
+					if input_left == 1:
 						for row in reversed(stepper_sequence):
 							GPIO.output(stepper_pins, row)
 							time.sleep(0.01)
-					if input_right:
+					if input_right == 1:
 						for row in stepper_sequence:
 							GPIO.output(stepper_pins, row)
 							time.sleep(0.01)
