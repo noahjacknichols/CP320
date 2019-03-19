@@ -23,81 +23,89 @@ count = 0
 flag = -1
 distArray = []
 #rotation = float(input("degree:")) //dont need this anymore
-inp = int(rotation * degree)
+#inp = int(rotation * degree)
 def keypad_function(row, col):
-	GPIO.output(col, 1)
-	int value = GPIO.input(row)
-	GPIO.output(col, 0)
-	return value
+    GPIO.output(col, 1)
+    value = GPIO.input(row)
+    GPIO.output(col, 0)
+    return value
 
 while True:
-	if keypad_function(17, 20) == 0:
-		flag = 0
-	else if keypad_function(17, 21) == 0:
-		flag = 1
-	try:
-		if flag == 0:
-		# automated solver mode
-			try:
-				while flag == 0:
-					# WHILE FLAG = 0 AND  GRAB FLAG = GPIO INPUT RIGHT AWAY
-					# need function to check if any of the option buttons has been pressed
-					# 
-			#		for row in reversed (stepper_sequence):
-					for row in stepper_sequence:
-						GPIO.output(stepper_pins,row)
-						time.sleep(0.01)
-						count+=1
-						if(count % 15 == 0):
-							distArray.append(x) #we need the sensor input. save as tuple like (distance, count_val)
-						if count == 360:
-							#find closest object
-							min = distArray[0]
-							for dist in distArray:
-								if dist < min:
-									min = dist
-							smallestObj = 0
-							while(True):
-								for row in stepper_sequence:
-									#if smallestObj coun is equal to the mins object degree, dont. just dont.
-									if(smallestObj != min[1]): 
-										GPIO.output(stepper_pins, row)
-										time.sleep(0.01)
-										smallestObj += 1
-									#set light to green or whatever
-								
-									
-							
 
-			except KeyboardInterrupt:
-				print("interrupted")
-				
-		if flag == 1:
-			#user solver mode
-			print("user solver mode")
-			try:
-				while (flag == 1):
-					#get flag = input of choice buttons
-					#grab input on move left or right here
-					input_left = 0
-					input_right = 0
-					if keypad_function(27, 20) == 0:
-						input_left = 1
-					else if keypad_function(27, 21) == 0:
-						input_right = 1
-					if input_left == 1:
-						for row in reversed(stepper_sequence):
-							GPIO.output(stepper_pins, row)
-							time.sleep(0.01)
-					if input_right == 1:
-						for row in stepper_sequence:
-							GPIO.output(stepper_pins, row)
-							time.sleep(0.01)
-					#update light intensity here
+    try:
+        if keypad_function(17, 20) == 0:
+            flag = 0
+        elif keypad_function(17, 21) == 0:
+            flag = 1
+        print("the flag is currently: " +flag)
+        if flag == 0:
+        # automated solver mode
+            print("automated solver")
+            try:
+                while flag == 0:
+                    # WHILE FLAG = 0 AND  GRAB FLAG = GPIO INPUT RIGHT AWAY
+                    # need function to check if any of the option buttons has been pressed
+                    # 
+            #        for row in reversed (stepper_sequence):
+                    for row in stepper_sequence:
+                        GPIO.output(stepper_pins,row)
+                        time.sleep(0.01)
+                        count+=1
+                        if(count % 15 == 0):
+                            distArray.append(x) #we need the sensor input. save as tuple like (distance, count_val)
+                        if count == 360:
+                            #find closest object
+                            min = distArray[0]
+                            for dist in distArray:
+                                if dist < min:
+                                    min = dist
+                            smallestObj = 0
+                            while(smallestObj <= min[1]):
+                                for row in stepper_sequence:
+                                    #if smallestObj coun is equal to the mins object degree, dont. just dont.
+                                    if(smallestObj != min[1]): 
+                                        GPIO.output(stepper_pins, row)
+                                        time.sleep(0.01)
+                                        smallestObj += 1
+                                        break
+                                    #set light to green or whatever
+                                
+                                    
+                            
 
-			except KeyboardInterrupt:
-				print("Interrupted")		
-	except KeyboardInterrupt:
-		#do something here
-		print("overall flag occurred");
+            except KeyboardInterrupt:
+                print("interrupted")
+                
+        if flag == 1:
+            #user solver mode
+            print("user solver mode")
+            try:
+            #while (flag == 1):
+                #get flag = input of choice buttons
+                #grab input on move left or right here
+                input_left = 0
+                input_right = 0
+                if keypad_function(27, 20) == 0:
+                    input_left = 1
+                    input_right = 0 #added this just in case (testing)
+                elif keypad_function(27, 21) == 0:
+                    input_right = 1
+                    input_left = 0 #added this just in case
+                if input_left == 1:
+                    print("moving left")
+                    for row in reversed(stepper_sequence):
+                        GPIO.output(stepper_pins, row)
+                        time.sleep(0.01)
+                if input_right == 1:
+                    print("moving right")
+                    for row in stepper_sequence:
+                        GPIO.output(stepper_pins, row)
+                        time.sleep(0.01)
+                #update light intensity here
+
+            except KeyboardInterrupt:
+                print("Interrupted")        
+    except KeyboardInterrupt:
+        #do something here
+        print("overall flag occurred")
 GPIO.cleanup()
