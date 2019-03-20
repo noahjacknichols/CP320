@@ -25,56 +25,50 @@ distArray = []
 #rotation = float(input("degree:")) //dont need this anymore
 #inp = int(rotation * degree)
 def keypad_function(row, col):
-    time.sleep(0.001)
-	GPIO.output(col, 1)
-    value = GPIO.input(row)
-    print("row input = " + str(value))
 	time.sleep(0.001)
-    GPIO.output(col, 0)
-    return value
+	GPIO.output(col, 1)
+	value = GPIO.input(row)
+	print("row input = " + str(value))
+	time.sleep(0.001)
+	GPIO.output(col, 0)
+	return value
 
 while True:
 
-    try:
-        if keypad_function(17, 20) == 0 and keypad_function(17, 21) == 1: #auto mode
-            flag = 0
-        elif keypad_function(17, 21) == 0 and keypad_function(17, 20) == 1: #user mode
-            flag = 1
-        print("the flag is currently: " +str(flag))
+	try:
+		if keypad_function(17, 20) == 0 and keypad_function(17, 21) == 1: #auto mode
+			flag = 0
+		elif keypad_function(17, 21) == 0 and keypad_function(17, 20) == 1: #user mode
+			flag = 1
+		print("the flag is currently: " +str(flag))
 
-                
-        if flag == 1:
-            #user solver mode
-            print("user solver mode")
-            try:
-                while (flag == 1):
-                    #get flag = input of choice buttons
-                    #grab input on move left or right here
-                    input_left = 0
-                    input_right = 0
-                    if keypad_function(27, 20) == 0:
-                        input_left = 1
-                        input_right = 0 #added this just in case (testing)
-                    elif keypad_function(27, 21) == 0:
-                        input_right = 1
-                        input_left = 0 #added this just in case
-                    if input_left == 1:
-                        print("moving left")
-                        for row in reversed(stepper_sequence):
-                            print("supposed to be moving left")
-                            GPIO.output(stepper_pins, row)
-                            time.sleep(0.01)
-                    if input_right == 1:
-                        print("moving right")
-                        for row in stepper_sequence:
-                            print("supposed to be moving left")
-                            GPIO.output(stepper_pins, row)
-                            time.sleep(0.01)
-                    #update light intensity here
+				
+		if flag == 1:
+			#user solver mode
+			print("user solver mode")
+			try:
+				while (flag == 1):
+					#get flag = input of choice buttons
+					#grab input on move left or right here
+					if keypad_function(27, 20) == 0:
+						print("moving left")
+						for row in reversed(stepper_sequence):
+							print("supposed to be moving left")
+							GPIO.output(stepper_pins, row)
+							time.sleep(0.01)
+					elif keypad_function(27, 21) == 0:
+						print("moving right")
+						for row in stepper_sequence:
+							print("supposed to be moving left")
+							GPIO.output(stepper_pins, row)
+							time.sleep(0.01)
+					if keypad_function(17, 20) == 0 and keypad_function(17, 21) == 1:
+						flag = 0
+					#update light intensity here
 
-            except KeyboardInterrupt:
-                print("Interrupted")        
-    except KeyboardInterrupt:
-        #do something here
-        print("overall flag occurred")
+			except KeyboardInterrupt:
+				print("Interrupted")		
+	except KeyboardInterrupt:
+		#do something here
+		print("overall flag occurred")
 GPIO.cleanup()
