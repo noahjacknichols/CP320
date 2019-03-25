@@ -29,7 +29,7 @@ distArray = []
 kp = Keypad()
 
 def infrared_function():
-	adc_channel=1
+	adc_channel=0
 	spi=spidev.SpiDev()
 	spi.open(0,0)
 	spi.max_speed_hz = 5000
