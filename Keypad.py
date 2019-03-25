@@ -10,8 +10,8 @@ class Keypad():
     ["*",0,"#"]
     ]
 
-    ROW         = [5,6,13,19]
-    COLUMN      = [12,16,20]
+    ROW         = [17,27,13,19]
+    COLUMN      = [20,16,21]
     def getKey(self):
         for j in range(len(self.COLUMN)):
             GPIO.setup(self.COLUMN[j], GPIO.OUT)
