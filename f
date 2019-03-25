@@ -22,7 +22,6 @@ stepper_sequence.append([GPIO.LOW, GPIO.LOW, GPIO.HIGH,GPIO.LOW])
 stepper_sequence.append([GPIO.LOW, GPIO.LOW, GPIO.LOW,GPIO.HIGH])
 degree = 2048/360
 count = 0
-flag = -1
 distArray = []
 #rotation = float(input("degree:")) //dont need this anymore
 #inp = int(rotation * degree)
@@ -44,45 +43,38 @@ def infrared_function():
 	except KeyboardInterrupt:
 		pass
 	spi.close()
-	return data_scale
+	return (3.3-data_scale)/3.3
 
 while True:
 
 	try:
-		x = kpgetKey()
+		button = kp.getKey()
 		
-		if x == 1: #auto mode
-			flag = 0
-		elif x == 3: #user mode
-			flag = 1
-		print("the flag is currently: " +str(flag))
-
-				
-		if flag == 1:
-			#user solver mode
+		if button == 3: #auto mode#user solver mode
 			print("user solver mode")
 			try:
-				while (flag == 1):
+				while (button != 3):
 					#get flag = input of choice buttons
 					#grab input on move left or right here
-					x = kp.getKey()
-					if x == 6:
+					button = kp.getKey()
+					if button == 6:
 						for row in reversed(stepper_sequence):
 							print("supposed to be moving left")
 							GPIO.output(stepper_pins, row)
 							time.sleep(0.01)
-					elif x == 4:
+					elif button == 4:
 						for row in stepper_sequence:
 							print("supposed to be moving left")
 							GPIO.output(stepper_pins, row)
 							time.sleep(0.01)
-					if x == 1:
-						flag = 0
 					#update light intensity here
 					distance = infrared_function()
 					print("distance is: " + str(distance))
 			except KeyboardInterrupt:
-				print("Interrupted")		
+				print("Interrupted")	
+		elif button == 1: #user mode
+			print("auto mode")
+							
 	except KeyboardInterrupt:
 		#do something here
 		print("overall flag occurred")
