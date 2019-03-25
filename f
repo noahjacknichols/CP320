@@ -3,7 +3,7 @@
 import RPi.GPIO as GPIO
 import time
 import spidev
-
+from keypad import Keypad
 
 GPIO.setmode(GPIO.BCM)
 stepper_pins=[18,23,24,25]
@@ -26,15 +26,7 @@ flag = -1
 distArray = []
 #rotation = float(input("degree:")) //dont need this anymore
 #inp = int(rotation * degree)
-
-def keypad_function(row, col):
-	time.sleep(0.001)
-	GPIO.output(col, 1)
-	value = GPIO.input(row)
-	print("row input = " + str(value))
-	time.sleep(0.001)
-	GPIO.output(col, 0)
-	return value
+kp = Keypad()
 
 def infrared_function():
 	adc_channel=1
@@ -57,9 +49,11 @@ def infrared_function():
 while True:
 
 	try:
-		if keypad_function(17, 20) == 0 and keypad_function(17, 21) == 1: #auto mode
+		x = kpgetKey()
+		
+		if x == 1: #auto mode
 			flag = 0
-		elif keypad_function(17, 21) == 0 and keypad_function(17, 20) == 1: #user mode
+		elif x == 3: #user mode
 			flag = 1
 		print("the flag is currently: " +str(flag))
 
@@ -71,19 +65,18 @@ while True:
 				while (flag == 1):
 					#get flag = input of choice buttons
 					#grab input on move left or right here
-					if keypad_function(27, 20) == 0:
-						print("moving left")
+					x = kp.getKey()
+					if x == 6:
 						for row in reversed(stepper_sequence):
 							print("supposed to be moving left")
 							GPIO.output(stepper_pins, row)
 							time.sleep(0.01)
-					elif keypad_function(27, 21) == 0:
-						print("moving right")
+					elif x == 4:
 						for row in stepper_sequence:
 							print("supposed to be moving left")
 							GPIO.output(stepper_pins, row)
 							time.sleep(0.01)
-					if keypad_function(17, 20) == 0 and keypad_function(17, 21) == 1:
+					if x == 1:
 						flag = 0
 					#update light intensity here
 					distance = infrared_function()
