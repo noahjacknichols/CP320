@@ -6,10 +6,12 @@ import spidev
 from keypad import Keypad
 
 GPIO.setmode(GPIO.BCM)
-stepper_pins=[18,23,24,25]
+stepper_pins=[12,23,24,25]
 keypad_input_pins = [17, 27] #GPIO pin 17, 27 is for row 1 and 2 respectively
 keypad_output_pins = [20, 21] #GPIO pin 20, 21 is for column 1 and 3 respectively
-led_output_pin = [5] #GPIO 5 corresponds to the LED
+GPIO.setup(18,GPIO.OUT)
+p = GPIO.PWM(18,60)
+p.start(50)
 
 GPIO.setup(stepper_pins,GPIO.OUT)
 GPIO.setup(keypad_input_pins, GPIO.IN)
@@ -26,6 +28,9 @@ distArray = []
 #rotation = float(input("degree:")) //dont need this anymore
 #inp = int(rotation * degree)
 kp = Keypad()
+
+def ledFunction(distance):
+	p.ChangeDutyCycle(distance*100)
 
 def infrared_function():
 	adc_channel=0
@@ -70,6 +75,7 @@ while True:
 					#update light intensity here
 					distance = infrared_function()
 					print("distance is: " + str(distance))
+					ledFunction(distance)
 			except KeyboardInterrupt:
 				print("Interrupted")	
 		elif button == 1: #user mode
